@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import static dev.vmykh.sait.Utils.processRequest;
+
 public class BlockingServer {
 	private static final int PORT = 20000;
 
@@ -27,12 +29,17 @@ public class BlockingServer {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				try {
-					String input = in.readLine();
-					out.println("Hello, " + input);
-					clientSocket.close();
-				} catch (IOException e) {
-					throw new RuntimeException(e);
+				while (true) {
+					try {
+						String input = in.readLine();
+						if (input == null) {
+							break;
+						}
+						String response = processRequest(input);
+						out.println(response);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
 				}
 			}
 		}).start();

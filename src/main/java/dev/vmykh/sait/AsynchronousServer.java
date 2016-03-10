@@ -24,9 +24,10 @@ public class AsynchronousServer extends SimpleNioServer {
 		protected void onRead() {
 			while (!readQueue.isEmpty()) {
 				String input = decodeAscii(readQueue.take());
-				ByteBuf outputBuffer = ByteBuf.wrap(encodeAscii("Hello, " + input + "\n"));
+				input = input.substring(0, input.length() - 1);
+				String response = Utils.processRequest(input);
+				ByteBuf outputBuffer = ByteBuf.wrap(encodeAscii(response));
 				write(outputBuffer);
-				close();
 			}
 		}
 	}
